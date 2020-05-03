@@ -38,6 +38,7 @@ namespace JsonConfigForNetCoreConsoleApp
             _Config = new ConfigurationBuilder().AddJsonFile(jsonfileName).Build();
         }
 
+        #region Getters
         /// <summary>
         /// Получить строковое значение параметра
         /// </summary>
@@ -77,6 +78,32 @@ namespace JsonConfigForNetCoreConsoleApp
         }
 
         /// <summary>
+        /// Получить булевое значение параметра
+        /// </summary>
+        /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
+        /// <returns>Значение параметра</returns>
+        protected bool GetBoolValue(string key)
+        {
+            return bool.Parse(_Config[key]);
+        }
+
+        /// <summary>
+        /// Получить булевое обнуляемое значение параметра
+        /// </summary>
+        /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
+        /// <returns>Значение параметра</returns>
+        protected bool? GetNullableBoolValue(string key)
+        {
+            string s = _Config[key];
+            if (string.IsNullOrEmpty(s))
+                return null;
+            else
+                return bool.Parse(s);
+        }
+        #endregion
+
+        #region Setters
+        /// <summary>
         /// Установить строковое значение параметра
         /// </summary>
         /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
@@ -97,6 +124,18 @@ namespace JsonConfigForNetCoreConsoleApp
             _Config[key] = value.ToString();
             GetToken(key).Replace(value);
         }
+
+        /// <summary>
+        /// Установить числовое значение параметра
+        /// </summary>
+        /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
+        /// <param name="value">Значение</param>
+        protected void SetValue(string key, bool? value)
+        {
+            _Config[key] = value.ToString();
+            GetToken(key).Replace(value);
+        }
+        #endregion
 
         /// <summary>
         /// Получить токен объекта Json по указанному ключу

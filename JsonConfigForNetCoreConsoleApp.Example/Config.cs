@@ -11,7 +11,8 @@ namespace JsonConfigForNetCoreConsoleApp.Example
         
         public string Name 
         {
-            get => GetValue("Name"); 
+            get => GetValue("Name");
+            set => SetValue("Name", value);
         }
         
         public int Age 
@@ -22,20 +23,20 @@ namespace JsonConfigForNetCoreConsoleApp.Example
 
         public int? MaxTimeOut 
         { 
-            get => GetNullableIntValue("MySection:MaxTimeOut");
-            set => SetValue("MySection:MaxTimeOut", value);
+            get => GetNullableIntValue("MaxTimeOut");
+            set => SetValue("MaxTimeOut", value);
         }
 
-        public int? MaxPing 
-        { 
-            get => GetNullableIntValue("MySection:MaxPing");
-            set => SetValue("MySection:MaxPing", value);
+        public bool bool1
+        {
+            get => GetBoolValue("BoolSection:bool1");
+            set => SetValue("BoolSection:bool1", value);
         }
 
-        public string foo 
-        { 
-            get => GetValue("MySection:foo");
-            set => SetValue("MySection:foo", value);
+        public bool? bool2
+        {
+            get => GetNullableBoolValue("BoolSection:bool2");
+            set => SetValue("BoolSection:bool2", value);
         }
 
         #region Singleton

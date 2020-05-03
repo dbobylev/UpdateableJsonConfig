@@ -9,31 +9,23 @@ namespace JsonConfigForNetCoreConsoleApp.Example
         {
             var config = Config.Instanse();
             
-            PrintConfig(config);
+            PrintConfig("Before:");
 
-            //config.Name = "New name"; //Ошибка компиляции, не устанволен модификатор доступа set
-            config.MaxTimeOut = null;
-            config.MaxPing = 999;
-            config.foo = "NEW BARRR";
-            config.Age = config.Age + 1;
+            config.Name = null;
+            config.MaxTimeOut = 300;
+            config.Age++;
+            config.bool1 = !config.bool1;
+            config.bool2 = false;
             config.Save(); // >> Обязательное сохранеие! <<
 
-            PrintConfig(config);
-
-            Console.WriteLine();
-            Console.WriteLine("Json был обновлён:");
-            Console.WriteLine(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "appsettings.json")));
+            PrintConfig("After:");
         }
 
-        private static void PrintConfig(Config config)
+        private static void PrintConfig(string txt)
         {
-            Console.WriteLine("-----------------------------");
-            Console.WriteLine($"config.Url: {config.Url}");
-            Console.WriteLine($"config.Name: {config.Name}");
-            Console.WriteLine($"config.Age: {config.Age}");
-            Console.WriteLine($"config.MaxPing: {config.MaxPing}");
-            Console.WriteLine($"config.MaxTimeOut: {config.MaxTimeOut}");
-            Console.WriteLine($"config.foo: {config.foo}");
+            Console.WriteLine(txt);
+            Console.WriteLine(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "appsettings.json")));
+            Console.WriteLine();
         }
     }
 }
