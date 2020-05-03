@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonConfigForNetCoreConsoleApp", "JsonConfigForNetCoreConsoleApp\JsonConfigForNetCoreConsoleApp.csproj", "{0ADF4E0A-4872-47C8-B28F-1CC1ABA553C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonConfigForNetCoreConsoleApp", "JsonConfigForNetCoreConsoleApp\JsonConfigForNetCoreConsoleApp.csproj", "{0ADF4E0A-4872-47C8-B28F-1CC1ABA553C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonConfigForNetCoreConsoleApp.Example", "JsonConfigForNetCoreConsoleApp.Example\JsonConfigForNetCoreConsoleApp.Example.csproj", "{3710EEA2-9D4A-454D-9F0D-AC2ACC4F1A01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonConfigForNetCoreConsoleApp.Example", "JsonConfigForNetCoreConsoleApp.Example\JsonConfigForNetCoreConsoleApp.Example.csproj", "{3710EEA2-9D4A-454D-9F0D-AC2ACC4F1A01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonConfigForNetCoreConsoleApp.Tests", "JsonConfigForNetCoreConsoleApp.Tests\JsonConfigForNetCoreConsoleApp.Tests.csproj", "{C6DAC7AA-2F0B-4B3D-A012-50BB66993E7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{3710EEA2-9D4A-454D-9F0D-AC2ACC4F1A01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3710EEA2-9D4A-454D-9F0D-AC2ACC4F1A01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3710EEA2-9D4A-454D-9F0D-AC2ACC4F1A01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6DAC7AA-2F0B-4B3D-A012-50BB66993E7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6DAC7AA-2F0B-4B3D-A012-50BB66993E7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6DAC7AA-2F0B-4B3D-A012-50BB66993E7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6DAC7AA-2F0B-4B3D-A012-50BB66993E7A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

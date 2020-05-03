@@ -1,13 +1,19 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Serilog;
 using System;
 using System.IO;
 
 namespace JsonConfigForNetCoreConsoleApp
 {
-    public abstract class BaseJsonConfig
+    public class BaseJsonConfig
     {
+        Serilog.Core.Logger log = new LoggerConfiguration()
+            .MinimumLevel.Verbose()
+            .WriteTo.Console()
+            .CreateLogger();
+
         /// <summary>
         /// Представляет корень иерархии IConfiguration
         /// </summary>
@@ -16,7 +22,7 @@ namespace JsonConfigForNetCoreConsoleApp
         /// <summary>
         /// Имя Json файла с настройками
         /// </summary>
-        private string _JsonFileName;
+        private string _JsonFileName = "appsettings.json";
 
         /// <summary>
         /// Путь до Json файла, по умолчанию в директории приложения
@@ -32,123 +38,68 @@ namespace JsonConfigForNetCoreConsoleApp
         /// Базовый класс с управлением Json файла
         /// </summary>
         /// <param name="jsonfileName">Название Json файла (файл должен находиться в той же директории)</param>
-        public BaseJsonConfig(string jsonfileName = "appsettings.json")
+        protected BaseJsonConfig(string jsonfileName = null)
         {
-            _JsonFileName = jsonfileName;
-            _Config = new ConfigurationBuilder().AddJsonFile(jsonfileName).Build();
-        }
-
-        #region Getters
-        /// <summary>
-        /// Получить строковое значение параметра
-        /// </summary>
-        /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
-        /// <returns>Значение параметра</returns>
-        protected string GetValue(string key)
-        {
-            return _Config[key];
+            if (!string.IsNullOrEmpty(jsonfileName))
+                _JsonFileName = jsonfileName;
+            _Config = new ConfigurationBuilder().AddJsonFile(_JsonFileName).Build();
+            _Instance = this;
         }
 
         /// <summary>
-        /// Получить числовое значение параметра
+        /// Получить значение параметра
         /// </summary>
+        /// <typeparam name="T">Тип ожидаемого значения</typeparam>
         /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
-        /// <returns>Значение параметра</returns>
-        protected int GetIntValue(string key)
+        /// <returns>Значение праметра, при отсутствии значение типа по умолчанию</returns>
+        public T GetValue<T>(string key)
+        {
+            return GetValueWithCheckNull(key, out T value) ? default : value;
+        }
+
+        /// <summary>
+        /// Получить значение параметра
+        /// </summary>
+        /// <typeparam name="T">Тип ожидаемого значения</typeparam>
+        /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
+        /// <returns>Значение праметра, при отсутствии - null</returns>
+        public T? GetNullableValue<T>(string key) where T : struct
+        {
+            return GetValueWithCheckNull(key, out T value) ? default(T?) : value;
+        }
+
+        /// <summary>
+        /// Получить значение параметра из Json файла, так же проверить является ли оно null
+        /// </summary>
+        /// <typeparam name="T">Тип ожидаемого параметра</typeparam>
+        /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
+        /// <param name="value">Значение параметра</param>
+        /// <returns>Является ли значение - Null - Y/N</returns>
+        private bool GetValueWithCheckNull<T>(string key, out T value)
         {
             string stringValue = _Config[key];
-            if (string.IsNullOrEmpty(stringValue))
-                throw new ArgumentNullException(key, $"Не найдено значение: {key}");
-            else
-                return int.Parse(stringValue);
+            log.Debug($"Запрошено значение параметра key=[{key}] stringValue=[{stringValue}]");
+
+            bool IsEmpty = string.IsNullOrEmpty(stringValue) && typeof(T) != typeof(string);
+            value = IsEmpty ? default : (T)Convert.ChangeType(stringValue, typeof(T));
+            return IsEmpty;
         }
 
         /// <summary>
-        /// Получить числовое обнуляемое значение параметра
+        /// Установить значение параметра
         /// </summary>
         /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
-        /// <returns>Значение параметра</returns>
-        protected int? GetNullableIntValue(string key)
+        /// <param name="value">Новое значение</param>
+        public void SetValue(string key, object value)
         {
-            string s = _Config[key];
-            if (string.IsNullOrEmpty(s))
-                return null;
-            else
-                return int.Parse(s);
-        }
+            log.Debug($"Устанавливается новое значение: [{value}] для параметра: [{key}]");
+            _Config[key] = value == null ? null : value.ToString();
 
-        /// <summary>
-        /// Получить булевое значение параметра
-        /// </summary>
-        /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
-        /// <returns>Значение параметра</returns>
-        protected bool GetBoolValue(string key)
-        {
-            return bool.Parse(_Config[key]);
-        }
-
-        /// <summary>
-        /// Получить булевое обнуляемое значение параметра
-        /// </summary>
-        /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
-        /// <returns>Значение параметра</returns>
-        protected bool? GetNullableBoolValue(string key)
-        {
-            string s = _Config[key];
-            if (string.IsNullOrEmpty(s))
-                return null;
-            else
-                return bool.Parse(s);
-        }
-        #endregion
-
-        #region Setters
-        /// <summary>
-        /// Установить строковое значение параметра
-        /// </summary>
-        /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
-        /// <param name="value">Значение</param>
-        protected void SetValue(string key, string value)
-        {
-            _Config[key] = value;
-            GetToken(key).Replace(value);
-        }
-
-        /// <summary>
-        /// Установить числовое значение параметра
-        /// </summary>
-        /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
-        /// <param name="value">Значение</param>
-        protected void SetValue(string key, int? value)
-        {
-            _Config[key] = value.ToString();
-            GetToken(key).Replace(value);
-        }
-
-        /// <summary>
-        /// Установить числовое значение параметра
-        /// </summary>
-        /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
-        /// <param name="value">Значение</param>
-        protected void SetValue(string key, bool? value)
-        {
-            _Config[key] = value.ToString();
-            GetToken(key).Replace(value);
-        }
-        #endregion
-
-        /// <summary>
-        /// Получить токен объекта Json по указанному ключу
-        /// </summary>
-        /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
-        /// <returns>токен Json</returns>
-        private JToken GetToken(string key)
-        {
             if (_NotSavedJsonObject == null)
                 _NotSavedJsonObject = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(_FilePath));
 
             key = key.Replace(":", ".");
-            return _NotSavedJsonObject.SelectToken(key);
+            _NotSavedJsonObject.SelectToken(key).Replace(value == null ? null : JToken.FromObject(value));
         }
 
         /// <summary>
@@ -162,6 +113,18 @@ namespace JsonConfigForNetCoreConsoleApp
                 File.WriteAllText(_FilePath, output);
                 _NotSavedJsonObject = null;
             }
+        }
+
+        private static BaseJsonConfig _Instance;
+        public static BaseJsonConfig Instance()
+        {
+            if (_Instance == null)
+                _Instance = new BaseJsonConfig();
+            return _Instance;
+        }
+        public static void Reload()
+        {
+            _Instance = new BaseJsonConfig();
         }
     }
 }

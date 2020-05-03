@@ -6,36 +6,36 @@ namespace JsonConfigForNetCoreConsoleApp.Example
     {
         public string Url 
         {
-            get => GetValue("Url"); 
+            get => GetValue<string>("Url"); 
         }
         
         public string Name 
         {
-            get => GetValue("Name");
+            get => GetValue<string>("Name");
             set => SetValue("Name", value);
         }
         
         public int Age 
         { 
-            get => GetIntValue("Age"); 
+            get => GetValue<int>("Age"); 
             set => SetValue("Age", value); 
         }
 
         public int? MaxTimeOut 
         { 
-            get => GetNullableIntValue("MaxTimeOut");
+            get => GetNullableValue<int>("MaxTimeOut");
             set => SetValue("MaxTimeOut", value);
         }
 
         public bool bool1
         {
-            get => GetBoolValue("BoolSection:bool1");
+            get => GetValue<bool>("BoolSection:bool1");
             set => SetValue("BoolSection:bool1", value);
         }
 
         public bool? bool2
         {
-            get => GetNullableBoolValue("BoolSection:bool2");
+            get => GetNullableValue<bool>("BoolSection:bool2");
             set => SetValue("BoolSection:bool2", value);
         }
 
