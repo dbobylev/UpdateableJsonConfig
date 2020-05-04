@@ -29,14 +29,14 @@ namespace JsonConfigForNetCoreConsoleApp.Tests
             Console.WriteLine(param);
             Console.WriteLine("######################");
 
-            // Сохраняем Json в файл
+            // РЎРѕС…СЂР°РЅСЏРµРј Json РІ С„Р°Р№Р»
             File.WriteAllText(_TestFilePath, param.BaseJson);
 
-            // Загружаем конфиг
+            // Р—Р°РіСЂСѓР¶Р°РµРј РєРѕРЅС„РёРі
             var config = new MyConfig(_TestFileName);
             File.Delete(_TestFilePath);
 
-            //Выбираем метод через который будем запроашивать занчение
+            //Р’С‹Р±РёСЂР°РµРј РјРµС‚РѕРґ С‡РµСЂРµР· РєРѕС‚РѕСЂС‹Р№ Р±СѓРґРµРј Р·Р°РїСЂРѕР°С€РёРІР°С‚СЊ Р·Р°РЅС‡РµРЅРёРµ
             string methodName = string.Empty;
             switch (param.MethodType)
             {
@@ -53,11 +53,11 @@ namespace JsonConfigForNetCoreConsoleApp.Tests
                     break;
             }
 
-            // Получаем значение
+            // РџРѕР»СѓС‡Р°РµРј Р·РЅР°С‡РµРЅРёРµ
             var value = typeof(BaseJsonConfig).GetMethod(methodName).MakeGenericMethod(typeof(T)).Invoke(config, new[] { "mykey" });
 
-            Console.WriteLine($"Полученное значение: [{(value == null ? "null" : value.ToString())}]");
-            Console.WriteLine($"Ожидаемое значение: [{(value == null ? "null" : value.ToString())}]");
+            Console.WriteLine($"РџРѕР»СѓС‡РµРЅРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ: [{(value == null ? "null" : value.ToString())}]");
+            Console.WriteLine($"РћР¶РёРґР°РµРјРѕРµ Р·РЅР°С‡РµРЅРёРµ: [{(value == null ? "null" : value.ToString())}]");
 
             Assert.AreEqual(param.ExceptedResult, value);
         }
@@ -69,13 +69,13 @@ namespace JsonConfigForNetCoreConsoleApp.Tests
             Console.WriteLine(param);
             Console.WriteLine("######################");
 
-            // Сохраняем Json в файл
+            // РЎРѕС…СЂР°РЅСЏРµРј Json РІ С„Р°Р№Р»
             File.WriteAllText(_TestFilePath, param.BaseJson);
 
-            // Загружаем конфиг
+            // Р—Р°РіСЂСѓР¶Р°РµРј РєРѕРЅС„РёРі
             var config = new MyConfig(_TestFileName);
 
-            // Обновляем значение
+            // РћР±РЅРѕРІР»СЏРµРј Р·РЅР°С‡РµРЅРёРµ
             config.SetValue("mykey", param.Value);
             config.Save();
 
@@ -85,8 +85,8 @@ namespace JsonConfigForNetCoreConsoleApp.Tests
             JObject ResultJson = JObject.Parse(ResultJsonString);
             JObject ExceptedJson = JObject.Parse(param.ExceptedJson);
 
-            Console.WriteLine($"Полученный JSON:\r\n{ResultJson.ToString()}");
-            Console.WriteLine($"Ожидаемый JSON:\r\n{ExceptedJson.ToString()}");
+            Console.WriteLine($"РџРѕР»СѓС‡РµРЅРЅС‹Р№ JSON:\r\n{ResultJson.ToString()}");
+            Console.WriteLine($"РћР¶РёРґР°РµРјС‹Р№ JSON:\r\n{ExceptedJson.ToString()}");
 
             Assert.IsTrue(JToken.DeepEquals(ExceptedJson, ResultJson));
         }
