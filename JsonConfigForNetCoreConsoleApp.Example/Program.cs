@@ -7,15 +7,15 @@ namespace JsonConfigForNetCoreConsoleApp.Example
     {
         static void Main(string[] args)
         {
-            var config = Config.Instanse();
-            
             PrintConfig("Before:");
+
+            var config = Config.Instanse();
 
             config.Name = null;
             config.MaxTimeOut = 300;
             config.Age++;
             config.bool1 = !config.bool1;
-            config.bool2 = false;
+            config.MyArray = new int[] { -6, 55 };
             config.Save(); // >> Обязательное сохранеие! <<
 
             PrintConfig("After:");

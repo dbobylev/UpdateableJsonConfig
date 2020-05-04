@@ -1,80 +1,94 @@
+using Microsoft.VisualStudio.TestPlatform.Utilities;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using JsonConfigForNetCoreConsoleApp.Tests.TestSource;
 
 namespace JsonConfigForNetCoreConsoleApp.Tests
 {
+    class MyConfig : BaseJsonConfig
+    {
+        public MyConfig(string FileName = null) : base(FileName)
+        {
+
+        }
+    }
+
     public class BaseJsonConfigTest
     {
-        private static string _TestFileName = "appsettings.json";
+        private static string _TestFileName = "Test.json";
         private static string _TestFilePath = Path.Combine(AppContext.BaseDirectory, _TestFileName);
 
-        [TestCase("{\"mykey\": \"myvalue\"}", typeof(string), "myvalue")]
-        [TestCase("{\"mykey\": null}", typeof(string), "")]
-        [TestCase("{\"mykey\": \"\"}", typeof(string), "")]
-        [TestCase("{\"mykey\": 10 }", typeof(int), 10)]
-        [TestCase("{\"mykey\": 10 }", typeof(int), 10, true)]
-        [TestCase("{\"mykey\": null }", typeof(int), 0)]
-        [TestCase("{\"mykey\": null }", typeof(int), null, true)]
-        [TestCase("{\"mykey\": true }", typeof(bool), true)]
-        [TestCase("{\"mykey\": true }", typeof(bool), true, true)]
-        [TestCase("{\"mykey\": null }", typeof(bool), false)]
-        [TestCase("{\"mykey\": null }", typeof(bool), null, true)]
-        public static void ReadValueTest(string json, Type T, object exceptedValue, bool IsNullable = false)
+        [TestCaseSource(typeof(BaseJsonConfigSource), "ReadValueTestData")]
+        public static void ReadValueTest<T>(ReadValueTestDataParam<T> param)
         {
-            File.WriteAllText(_TestFilePath, json);
+            Console.WriteLine("##### TEST BEGIN #####");
+            Console.WriteLine(param);
+            Console.WriteLine("######################");
 
-            BaseJsonConfig.Reload();
-            var config = BaseJsonConfig.Instance();
+            // Сохраняем Json в файл
+            File.WriteAllText(_TestFilePath, param.BaseJson);
 
-            MethodInfo method;
-            if (IsNullable)
-                method = typeof(BaseJsonConfig).GetMethod(nameof(config.GetNullableValue));
-            else
-                method = typeof(BaseJsonConfig).GetMethod(nameof(config.GetValue));
-           
-            MethodInfo generic = method.MakeGenericMethod(T);
-            var val = generic.Invoke(config, new[] { "mykey" });
-
-
+            // Загружаем конфиг
+            var config = new MyConfig(_TestFileName);
             File.Delete(_TestFilePath);
 
-            Assert.AreEqual(exceptedValue, val);
+            //Выбираем метод через который будем запроашивать занчение
+            string methodName = string.Empty;
+            switch (param.MethodType)
+            {
+                case eMethodType.General:
+                    methodName = nameof(config.GetValue);
+                    break;
+                case eMethodType.Nullable:
+                    methodName = nameof(config.GetNullableValue);
+                    break;
+                case eMethodType.Enumerable:
+                    methodName = nameof(config.GetEnumerableValue);
+                    break;
+                default:
+                    break;
+            }
+
+            // Получаем значение
+            var value = typeof(BaseJsonConfig).GetMethod(methodName).MakeGenericMethod(typeof(T)).Invoke(config, new[] { "mykey" });
+
+            Console.WriteLine($"Полученное значение: [{(value == null ? "null" : value.ToString())}]");
+            Console.WriteLine($"Ожидаемое значение: [{(value == null ? "null" : value.ToString())}]");
+
+            Assert.AreEqual(param.ExceptedResult, value);
         }
 
-        [TestCase("{\"mykey\": \"myvalue\"}", "{\r\n  \"mykey\": \"newvalue\"\r\n}", "newvalue")]
-        [TestCase("{\"mykey\": \"myvalue\"}", "{\r\n  \"mykey\": \"\"\r\n}", "")]
-        [TestCase("{\"mykey\": \"myvalue\"}", "{\r\n  \"mykey\": null\r\n}", null)]
-        [TestCase("{\"mykey\": \"\"}", "{\r\n  \"mykey\": \"newvalue\"\r\n}", "newvalue")]
-        [TestCase("{\"mykey\": \"\"}", "{\r\n  \"mykey\": \"\"\r\n}", "")]
-        [TestCase("{\"mykey\": \"\"}", "{\r\n  \"mykey\": null\r\n}", null)]
-        [TestCase("{\"mykey\": null}", "{\r\n  \"mykey\": \"newvalue\"\r\n}", "newvalue")]
-        [TestCase("{\"mykey\": null}", "{\r\n  \"mykey\": \"\"\r\n}", "")]
-        [TestCase("{\"mykey\": null}", "{\r\n  \"mykey\": null\r\n}", null)]
-        [TestCase("{\"mykey\": 10}", "{\r\n  \"mykey\": 20\r\n}", 20)]
-        [TestCase("{\"mykey\": null}", "{\r\n  \"mykey\": 20\r\n}", 20)]
-        [TestCase("{\"mykey\": 10}", "{\r\n  \"mykey\": null\r\n}", null)]
-        [TestCase("{\"mykey\": null}", "{\r\n  \"mykey\": null\r\n}", null)]
-        [TestCase("{\"mykey\": true}", "{\r\n  \"mykey\": false\r\n}", false)]
-        [TestCase("{\"mykey\": true}", "{\r\n  \"mykey\": null\r\n}", null)]
-        [TestCase("{\"mykey\": null}", "{\r\n  \"mykey\": false\r\n}", false)]
-        [TestCase("{\"mykey\": null}", "{\r\n  \"mykey\": null\r\n}", null)]
-        public static void SetValueTest(string BaseJson, string ExceptedJson, object value)
+        [TestCaseSource(typeof(BaseJsonConfigSource), "SetValueTestData")]
+        public static void SetValueTest(SetValueTestDataParam param)
         {
-            File.WriteAllText(_TestFilePath, BaseJson);
-            
-            BaseJsonConfig.Reload();
-            var config = BaseJsonConfig.Instance();
-            
-            config.SetValue("mykey", value);
+            Console.WriteLine("##### TEST BEGIN #####");
+            Console.WriteLine(param);
+            Console.WriteLine("######################");
+
+            // Сохраняем Json в файл
+            File.WriteAllText(_TestFilePath, param.BaseJson);
+
+            // Загружаем конфиг
+            var config = new MyConfig(_TestFileName);
+
+            // Обновляем значение
+            config.SetValue("mykey", param.Value);
             config.Save();
-            
-            string ResultJson = File.ReadAllText(_TestFilePath);
-           
+
+            string ResultJsonString = File.ReadAllText(_TestFilePath);
             File.Delete(_TestFilePath);
-            
-            Assert.AreEqual(ExceptedJson, ResultJson);
+
+            JObject ResultJson = JObject.Parse(ResultJsonString);
+            JObject ExceptedJson = JObject.Parse(param.ExceptedJson);
+
+            Console.WriteLine($"Полученный JSON:\r\n{ResultJson.ToString()}");
+            Console.WriteLine($"Ожидаемый JSON:\r\n{ExceptedJson.ToString()}");
+
+            Assert.IsTrue(JToken.DeepEquals(ExceptedJson, ResultJson));
         }
     }
 }

@@ -1,9 +1,26 @@
 ﻿using JsonConfigForNetCoreConsoleApp;
+using System.Linq;
 
 namespace JsonConfigForNetCoreConsoleApp.Example
 {
     class Config : BaseJsonConfig
     {
+        private static Config _Instanse;
+        public static Config Instanse()
+        {
+            if (_Instanse == null)
+                _Instanse = new Config();
+            return _Instanse;
+        }
+        public static void InitConfig(string filename = null)
+        {
+            _Instanse = new Config(filename);
+        }
+
+        private Config(string filename = null) : base(filename)
+        {
+        }
+
         public string Url 
         {
             get => GetValue<string>("Url"); 
@@ -29,28 +46,14 @@ namespace JsonConfigForNetCoreConsoleApp.Example
 
         public bool bool1
         {
-            get => GetValue<bool>("BoolSection:bool1");
-            set => SetValue("BoolSection:bool1", value);
+            get => GetValue<bool>("MySection:MyBool");
+            set => SetValue("MySection:MyBool", value);
         }
 
-        public bool? bool2
+        public int[] MyArray
         {
-            get => GetNullableValue<bool>("BoolSection:bool2");
-            set => SetValue("BoolSection:bool2", value);
+            get => GetEnumerableValue<int>("MySection:MyArray").ToArray();
+            set => SetValue("MySection:MyArray", value);
         }
-
-        #region Singleton
-        private static Config _Instanse;
-        public static Config Instanse()
-        {
-            if (_Instanse == null)
-                _Instanse = new Config();
-            return _Instanse;
-        }
-        private Config() : base()
-        {
-
-        }
-        #endregion
     }
 }
