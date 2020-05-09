@@ -1,5 +1,5 @@
 ## Getting started
-Use your custom the updateable settings class like thes:
+Use your custom updateable the settings class like this:
 
 ```cs
     class Config : UpdateableJsonConfig
@@ -23,3 +23,5 @@ Use your custom the updateable settings class like thes:
         /* Your properties */
     }
 ```
+
+See [Config.cs](https://github.com/dbobylev/UpdateableJsonConfig/blob/master/UpdateableJsonConfig.Example/Config.cs).

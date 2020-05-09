@@ -1,10 +1,10 @@
-# JsonConfigForNetCoreConsoleApp
+# UpdateableJsonConfig
 
 The updateable settings for the .Net Core console application like the "settings" in the .Net Framework. 
 
 Just inherit the BaseJsonConfig class and create you own parametrs to work with the json setting file. 
 
-See [example](https://github.com/dbobylev/JsonConfigForNetCoreConsoleApp/blob/master/JsonConfigForNetCoreConsoleApp.Example/Config.cs).
+See [example](https://github.com/dbobylev/UpdateableJsonConfig/tree/master/UpdateableJsonConfig.Example).
 
 Friendly types:
 
