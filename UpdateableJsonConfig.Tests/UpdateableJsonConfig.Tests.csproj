@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JsonConfigForNetCoreConsoleApp\JsonConfigForNetCoreConsoleApp.csproj" />
+    <ProjectReference Include="..\UpdateableJsonConfig\UpdateableJsonConfig.csproj" />
   </ItemGroup>
 
 </Project>
