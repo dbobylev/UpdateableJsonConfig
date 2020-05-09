@@ -1,19 +1,28 @@
-using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using System;
 using System.IO;
-using System.Reflection;
-using System.Text.RegularExpressions;
 using JsonConfigForNetCoreConsoleApp.Tests.TestSource;
+using Microsoft.Extensions.Configuration;
 
 namespace JsonConfigForNetCoreConsoleApp.Tests
 {
-    class MyConfig : BaseJsonConfig
+    class Config : UpdateableJsonConfig
     {
-        public MyConfig(string FileName = null) : base(FileName)
+        private static Config _Instanse;
+        public static Config Instanse()
         {
-
+            if (_Instanse == null)
+                throw new ArgumentNullException("Configuration not loaded");
+            return _Instanse;
+        }
+        public static Config InitConfig(IConfigurationRoot config, string filepath)
+        {
+            _Instanse = new Config(config, filepath);
+            return _Instanse;
+        }
+        private Config(IConfigurationRoot config, string filepath) : base(config, filepath)
+        {
         }
     }
 
@@ -21,6 +30,11 @@ namespace JsonConfigForNetCoreConsoleApp.Tests
     {
         private static string _TestFileName = "Test.json";
         private static string _TestFilePath = Path.Combine(AppContext.BaseDirectory, _TestFileName);
+
+        private static Config LoadConfig()
+        {
+            return Config.InitConfig(new ConfigurationBuilder().AddJsonFile(_TestFilePath).Build(), _TestFilePath);
+        }
 
         [TestCaseSource(typeof(BaseJsonConfigSource), "ReadValueTestData")]
         public static void ReadValueTest<T>(ReadValueTestDataParam<T> param)
@@ -33,7 +47,7 @@ namespace JsonConfigForNetCoreConsoleApp.Tests
             File.WriteAllText(_TestFilePath, param.BaseJson);
 
             // Загружаем конфиг
-            var config = new MyConfig(_TestFileName);
+            var config = LoadConfig();
             File.Delete(_TestFilePath);
 
             //Выбираем метод через который будем запроашивать занчение
@@ -54,7 +68,7 @@ namespace JsonConfigForNetCoreConsoleApp.Tests
             }
 
             // Получаем значение
-            var value = typeof(BaseJsonConfig).GetMethod(methodName).MakeGenericMethod(typeof(T)).Invoke(config, new[] { "mykey" });
+            var value = typeof(UpdateableJsonConfig).GetMethod(methodName).MakeGenericMethod(typeof(T)).Invoke(config, new[] { "mykey" });
 
             Console.WriteLine($"Полученное значение: [{(value == null ? "null" : value.ToString())}]");
             Console.WriteLine($"Ожидаемое значение: [{(value == null ? "null" : value.ToString())}]");
@@ -73,7 +87,7 @@ namespace JsonConfigForNetCoreConsoleApp.Tests
             File.WriteAllText(_TestFilePath, param.BaseJson);
 
             // Загружаем конфиг
-            var config = new MyConfig(_TestFileName);
+            var config = LoadConfig();
 
             // Обновляем значение
             config.SetValue("mykey", param.Value);

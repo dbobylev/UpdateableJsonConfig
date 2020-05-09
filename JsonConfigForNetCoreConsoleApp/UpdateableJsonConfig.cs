@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace JsonConfigForNetCoreConsoleApp
 {
-    public class BaseJsonConfig
+    public class UpdateableJsonConfig
     {
         Serilog.Core.Logger log = new LoggerConfiguration()
             .MinimumLevel.Verbose()
@@ -23,14 +23,9 @@ namespace JsonConfigForNetCoreConsoleApp
         private IConfigurationRoot _Config;
 
         /// <summary>
-        /// Имя Json файла с настройками
-        /// </summary>
-        private string _JsonFileName = "appsettings.json";
-
-        /// <summary>
         /// Путь до Json файла, по умолчанию в директории приложения
         /// </summary>
-        private string _FilePath { get => Path.Combine(AppContext.BaseDirectory, _JsonFileName); }
+        private string _FilePath { get; set; }
 
         /// <summary>
         /// Объект Json с измененными параметрами, требует последующего сохранения
@@ -41,11 +36,10 @@ namespace JsonConfigForNetCoreConsoleApp
         /// Базовый класс с управлением Json файла
         /// </summary>
         /// <param name="jsonfileName">Название Json файла (файл должен находиться в той же директории)</param>
-        protected BaseJsonConfig(string jsonfileName)
+        protected UpdateableJsonConfig(IConfigurationRoot config, string filePath)
         {
-            if (!string.IsNullOrEmpty(jsonfileName))
-                _JsonFileName = jsonfileName;
-            _Config = new ConfigurationBuilder().AddJsonFile(_JsonFileName).Build();
+            _Config = config;
+            _FilePath = filePath;
         }
 
         /// <summary>

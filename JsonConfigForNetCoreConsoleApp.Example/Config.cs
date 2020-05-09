@@ -1,23 +1,25 @@
 ﻿using JsonConfigForNetCoreConsoleApp;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Linq;
 
 namespace JsonConfigForNetCoreConsoleApp.Example
 {
-    class Config : BaseJsonConfig
+    class Config : UpdateableJsonConfig
     {
         private static Config _Instanse;
         public static Config Instanse()
         {
             if (_Instanse == null)
-                _Instanse = new Config();
+                throw new ArgumentNullException("Configuration not loaded");
             return _Instanse;
         }
-        public static void InitConfig(string filename = null)
+        public static Config InitConfig(IConfigurationRoot config, string filepath)
         {
-            _Instanse = new Config(filename);
+            _Instanse = new Config(config, filepath);
+            return _Instanse;
         }
-
-        private Config(string filename = null) : base(filename)
+        private Config(IConfigurationRoot config, string filepath) : base(config, filepath)
         {
         }
 

@@ -1,15 +1,19 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.IO;
 
 namespace JsonConfigForNetCoreConsoleApp.Example
 {
     class Program
     {
+        static readonly string configPath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+
         static void Main(string[] args)
         {
             PrintConfig("Before:");
 
-            var config = Config.Instanse();
+            var configRoot = new ConfigurationBuilder().AddJsonFile(configPath).Build();
+            var config = Config.InitConfig(configRoot, configPath);
 
             config.Name = null;
             config.MaxTimeOut = 300;
@@ -24,7 +28,7 @@ namespace JsonConfigForNetCoreConsoleApp.Example
         private static void PrintConfig(string txt)
         {
             Console.WriteLine(txt);
-            Console.WriteLine(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "appsettings.json")));
+            Console.WriteLine(File.ReadAllText(configPath));
             Console.WriteLine();
         }
     }
