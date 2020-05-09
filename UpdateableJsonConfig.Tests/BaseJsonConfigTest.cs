@@ -2,10 +2,10 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using System;
 using System.IO;
-using JsonConfigForNetCoreConsoleApp.Tests.TestSource;
+using UpdateableJsonConfig.Tests.TestSource;
 using Microsoft.Extensions.Configuration;
 
-namespace JsonConfigForNetCoreConsoleApp.Tests
+namespace UpdateableJsonConfig.Tests
 {
     class Config : UpdateableJsonConfig
     {

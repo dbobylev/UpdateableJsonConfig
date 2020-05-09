@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace JsonConfigForNetCoreConsoleApp.Example
+namespace UpdateableJsonConfig.Example
 {
     class Program
     {

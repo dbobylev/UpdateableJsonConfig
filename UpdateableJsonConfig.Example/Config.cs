@@ -1,9 +1,9 @@
-﻿using JsonConfigForNetCoreConsoleApp;
+﻿using UpdateableJsonConfig;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
 
-namespace JsonConfigForNetCoreConsoleApp.Example
+namespace UpdateableJsonConfig.Example
 {
     class Config : UpdateableJsonConfig
     {

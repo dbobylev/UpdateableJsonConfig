@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace JsonConfigForNetCoreConsoleApp.Tests.TestSource
+namespace UpdateableJsonConfig.Tests.TestSource
 {
     public class ReadValueTestDataParam<T>: ITestDataParam
     {
