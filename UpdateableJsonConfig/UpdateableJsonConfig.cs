@@ -8,7 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 
-namespace UpdateableJsonConfig
+namespace UpdateableConfig
 {
     public class UpdateableJsonConfig
     {

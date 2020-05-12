@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace UpdateableJsonConfig.Tests.TestSource
+namespace UpdateableConfig.Tests.TestSource
 {
     public class ReadValueTestDataParam<T>: ITestDataParam
     {

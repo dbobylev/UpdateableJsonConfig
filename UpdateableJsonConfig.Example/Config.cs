@@ -1,9 +1,9 @@
-﻿using UpdateableJsonConfig;
+﻿using UpdateableConfig;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
 
-namespace UpdateableJsonConfig.Example
+namespace UpdateableConfig.Example
 {
     class Config : UpdateableJsonConfig
     {

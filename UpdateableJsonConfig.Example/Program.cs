@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace UpdateableJsonConfig.Example
+namespace UpdateableConfig.Example
 {
     class Program
     {

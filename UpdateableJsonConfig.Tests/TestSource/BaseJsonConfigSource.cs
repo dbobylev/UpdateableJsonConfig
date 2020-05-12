@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace UpdateableJsonConfig.Tests.TestSource
+namespace UpdateableConfig.Tests.TestSource
 {
     class BaseJsonConfigSource
     {
