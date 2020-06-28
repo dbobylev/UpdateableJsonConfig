@@ -30,32 +30,32 @@ namespace UpdateableConfig.Example
         
         public string Name 
         {
-            get => GetValue<string>("Name");
-            set => SetValue("Name", value);
+            get => GetValue<string>();
+            set => SetValue(value);
         }
         
         public int Age 
         { 
-            get => GetValue<int>("Age"); 
-            set => SetValue("Age", value); 
+            get => GetValue<int>(); 
+            set => SetValue(value); 
         }
 
         public int? MaxTimeOut 
         { 
-            get => GetNullableValue<int>("MaxTimeOut");
-            set => SetValue("MaxTimeOut", value);
+            get => GetNullableValue<int>();
+            set => SetValue(value);
         }
 
         public bool bool1
         {
             get => GetValue<bool>("MySection:MyBool");
-            set => SetValue("MySection:MyBool", value);
+            set => SetValue(value, "MySection:MyBool");
         }
 
         public int[] MyArray
         {
             get => GetEnumerableValue<int>("MySection:MyArray").ToArray();
-            set => SetValue("MySection:MyArray", value);
+            set => SetValue(value, "MySection:MyArray");
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace UpdateableConfig
 {
@@ -48,9 +49,9 @@ namespace UpdateableConfig
         /// <typeparam name="T">Тип ожидаемого значения</typeparam>
         /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
         /// <returns>Значение праметра, при отсутствии значение типа по умолчанию</returns>
-        public T GetValue<T>(string key)
+        public T GetValue<T>([CallerMemberName] string key = "")
         {
-            return GetValueWithCheckNull(key, out T value) ? default : value;
+            return GetValueWithCheckNull(out T value, key) ? default : value;
         }
 
         /// <summary>
@@ -59,12 +60,12 @@ namespace UpdateableConfig
         /// <typeparam name="T">Тип ожидаемого значения</typeparam>
         /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
         /// <returns>Значение праметра, при отсутствии - null</returns>
-        public T? GetNullableValue<T>(string key) where T : struct
+        public T? GetNullableValue<T>([CallerMemberName] string key = "") where T : struct
         {
-            return GetValueWithCheckNull(key, out T value) ? default(T?) : value;
+            return GetValueWithCheckNull(out T value, key) ? default(T?) : value;
         }
 
-        public IEnumerable<T> GetEnumerableValue<T>(string key)
+        public IEnumerable<T> GetEnumerableValue<T>([CallerMemberName] string key = "")
         {
             return _Config.GetSection(key).GetChildren().Select(x=> (T)Convert.ChangeType(x.Value, typeof(T)));
         }
@@ -76,7 +77,7 @@ namespace UpdateableConfig
         /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
         /// <param name="value">Значение параметра</param>
         /// <returns>Является ли значение - Null - Y/N</returns>
-        private bool GetValueWithCheckNull<T>(string key, out T value)
+        private bool GetValueWithCheckNull<T>(out T value, [CallerMemberName] string key = "")
         {
             string stringValue = _Config[key];
             log.Debug($"Запрошено значение параметра key=[{key}] stringValue=[{stringValue}]");
@@ -94,7 +95,7 @@ namespace UpdateableConfig
         /// </summary>
         /// <param name="key">Путь до параметра в объекте JSON (указывать через двоеточие)</param>
         /// <param name="value">Новое значение</param>
-        public void SetValue(string key, object value)
+        public void SetValue(object value, [CallerMemberName] string key = "")
         {
             log.Debug($"Устанавливается новое значение: [{value}] для параметра: [{key}]");
             _Config[key] = value == null ? null : value.ToString();

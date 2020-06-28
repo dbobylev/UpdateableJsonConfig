@@ -90,7 +90,7 @@ namespace UpdateableConfig.Tests
             var config = LoadConfig();
 
             // Обновляем значение
-            config.SetValue("mykey", param.Value);
+            config.SetValue(param.Value, "mykey");
             config.Save();
 
             string ResultJsonString = File.ReadAllText(_TestFilePath);
